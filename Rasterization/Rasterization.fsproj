@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <WarningsAsErrors>true</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="Shapes\Line.fs" />
+    <Compile Include="Shapes\Circle.fs" />
+    <Compile Include="Shapes\Polygon.fs" />
+    <Compile Include="Shapes\Arc.fs" />
+    <Compile Include="Shapes\Rectangle.fs" />
+    <Compile Include="ShapeHitting.fs" />
+    <Compile Include="ShapeDrawing.fs" />
+    <Compile Include="ShapeMoving.fs" />
+    <Compile Include="DrawingCanvas.fs" />
+    <Compile Include="MainView.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.12" />
+    <PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.5.0" />
+    <PackageReference Include="JaggerJo.Avalonia.FuncUI.DSL" Version="0.5.0" />
+    <PackageReference Include="JaggerJo.Avalonia.FuncUI.Elmish" Version="0.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
+  </ItemGroup>
+</Project>
