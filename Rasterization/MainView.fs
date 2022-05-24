@@ -1,11 +1,12 @@
 ﻿namespace Rasterization
 
-open System.Text.Json
 open Avalonia.Controls
 open Avalonia.FuncUI.DSL
 open Avalonia.FuncUI.Hosts
+open Avalonia.Input
 open Avalonia.Media
 open Newtonsoft.Json
+open Rasterization
 
 module MainView =
     let filePath = "/Users/kirylvolkau/Desktop/export.json"
@@ -14,11 +15,11 @@ module MainView =
     
     let getHitFigure (shape: Shape option) =
         match shape with
-        | Some x -> sprintf "%A" x
+        | Some x -> sprintf "%A" {x with AllPixels = []}// hide all pixels - they mess up the screen.
         | None -> "no figure selected"
     
     type State = {
-        drawingState: DrawingCanvas.DrawingState
+        drawingState: DrawingState
         red: double
         blue: double
         green: double
@@ -54,8 +55,11 @@ module MainView =
          | UpdateGreen of double
          | UpdateBlue of double
          | UpdateDrawingColor of Shape
+         | UpdateFillColor of Shape
          | UpdateThickness of int
          | UpdateShapeThickness of Shape
+         | SetClipShape of Shape
+         | FloodFill of FloodFillMode
          | BrokenExport
          | AfterExportSelected of string
          | Export 
@@ -74,6 +78,16 @@ module MainView =
             {
              state with drawingState = (DrawingCanvas.update (DrawingCanvas.Msg.UpdateColor(newColor, shape)) state.drawingState)
             }, Elmish.Cmd.none
+        | FloodFill mode ->
+            let newColor = color (int state.red) (int state.green) (int state.blue) 
+            {
+             state with drawingState = (DrawingCanvas.update (DrawingCanvas.Msg.SetFloodFillColor(newColor, mode)) state.drawingState)
+            }, Elmish.Cmd.none
+        | UpdateFillColor shape ->
+             let newColor = color (int state.red) (int state.green) (int state.blue)
+             {
+             state with drawingState = (DrawingCanvas.update (DrawingCanvas.Msg.FillShape(newColor, shape)) state.drawingState)
+             }, Elmish.Cmd.none
         | UpdateThickness i -> {state with thickness = i}, Elmish.Cmd.none
         | UpdateShapeThickness shape ->
             {state with drawingState =  (DrawingCanvas.update (DrawingCanvas.Msg.UpdateThickness(state.thickness, shape)) state.drawingState) },
@@ -89,7 +103,8 @@ module MainView =
             state, Elmish.Cmd.none
         | Import ->
             { state with drawingState = import () }, Elmish.Cmd.none
-            
+        | SetClipShape shape ->
+            {state with drawingState = (DrawingCanvas.update (DrawingCanvas.Msg.SetClipShape(shape)) state.drawingState) }, Elmish.Cmd.none
         
     let editingPanel (shape: Shape) (state: State) (dispatch: Msg -> unit) =
         DockPanel.create [
@@ -167,6 +182,21 @@ module MainView =
                      Button.content "UPD COLOR"
                      Button.onClick (fun _ -> shape |> UpdateDrawingColor |> dispatch )
                  ]
+                 Button.create [
+                     Button.dock Dock.Top
+                     Button.content "FILL CLR COLOR"
+                     Button.onClick (fun _ -> shape |> UpdateFillColor |> dispatch )
+                 ]
+                 Button.create [
+                     Button.dock Dock.Top
+                     Button.content "SET FLOOD FILL COLOR (4 connected)"
+                     Button.onClick (fun _ -> Four |> FloodFill |> dispatch )
+                 ]
+                 Button.create [
+                     Button.dock Dock.Top
+                     Button.content "SET FLOOD FILL COLOR (8 connected)"
+                     Button.onClick (fun _ -> Eight |> FloodFill |> dispatch )
+                 ]
                  TextBlock.create [
                      TextBlock.dock Dock.Top
                      TextBlock.text $"New thickness: {state.thickness}"
@@ -185,6 +215,12 @@ module MainView =
                      Button.content "Update thickness"
                      Button.onClick (fun _ -> shape |> UpdateShapeThickness |> dispatch )
                  ]
+                 if shape.Type = Polygon then
+                    Button.create [
+                         Button.dock Dock.Top
+                         Button.content "Set as a clip"
+                         Button.onClick (fun _ -> shape |> SetClipShape |> dispatch )
+                    ]
              ]
         ]
     
@@ -227,6 +263,14 @@ module MainView =
                                 Button.horizontalContentAlignment HorizontalAlignment.Center
                                 Button.content "MODE: line"
                                 Button.onClick (fun _ -> DrawingCanvas.Msg.SetLineMode |> DrawingMsg |> dispatch )
+                                Button.dock Dock.Bottom
+                            ]
+                            Button.create [
+                                Button.width 200
+                                Button.horizontalAlignment HorizontalAlignment.Center
+                                Button.horizontalContentAlignment HorizontalAlignment.Center
+                                Button.content "MODE: rect"
+                                Button.onClick (fun _ -> DrawingCanvas.Msg.SetRectangleMode |> DrawingMsg |> dispatch )
                                 Button.dock Dock.Bottom
                             ]
                             Button.create [

@@ -36,12 +36,18 @@ let line (color: SystemColor) (point1: Point) (point2: Point) (thickness: int) =
     { Type = Line
       Color = color
       IsComplete = true
+      IsRect = false
+      Fill = None
+      AllPixels = []
       Points = [ point1; point2 ]
       Thickness = thickness }
 
 let circle (color: SystemColor) (center: Point) (circlePoint: Point) =
     { Type = Circle
       Color = color
+      AllPixels = []
+      IsRect = false
+      Fill = None
       Points = [ center; circlePoint ]
       IsComplete = true
       Thickness = 1 }
@@ -50,18 +56,36 @@ let polygon (color: SystemColor) (points: Point list) (thickness: int) =
     {
         Type = Polygon
         Color = color
+        Fill = None
         Points = points
+        IsRect = false
         IsComplete = false
+        AllPixels = []
         Thickness = thickness
     }
     
 let arc (points: Point list) =
     {
         Type = Arc
+        IsRect = false
+        Fill = None
         Color = SystemColor.Black
         Points = points
+        AllPixels = []
         IsComplete = true
         Thickness = 1
+    }
+
+let rectangle (color: SystemColor) (points: Point list) (thickness: int) =
+    {
+        Type = Polygon
+        Fill = None
+        Color = color
+        IsRect = true
+        Points = points
+        AllPixels = []
+        IsComplete = true
+        Thickness = thickness
     }
 
 let pointsAreInProximity (point1: Point) (point2: Point) =
@@ -79,9 +103,9 @@ let pointsAreInProximity (point1: Point) (point2: Point) =
     
 let filterOutsidePixels (points: seq<Pixel>) =
       Seq.filter (fun p ->
-             p.x < CANVAS_WIDTH
-            && p.x >= 0
-            && p.y < CANVAS_HEIGHT
-            && p.y >= 0)
+             p.X < CANVAS_WIDTH
+            && p.X >= 0
+            && p.Y < CANVAS_HEIGHT
+            && p.Y >= 0)
             points
  

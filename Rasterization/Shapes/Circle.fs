@@ -28,10 +28,10 @@ module Circle =
         let mutable x = 0
         let mutable y = R
 
-        pixels.Add({ x = centerX; y = y + R ; color = shape.Color })
-        pixels.Add({ x = centerX; y = y - R; color = shape.Color })
-        pixels.Add({ x = centerX - R; y = y; color = shape.Color })
-        pixels.Add({ x = centerX + R; y = y; color = shape.Color })
+        pixels.Add({ X = centerX; Y = y + R ; color = shape.Color })
+        pixels.Add({ X = centerX; Y = y - R; color = shape.Color })
+        pixels.Add({ X = centerX - R; Y = y; color = shape.Color })
+        pixels.Add({ X = centerX + R; Y = y; color = shape.Color })
 
         while y > x do
             if d < 0 then
@@ -47,50 +47,50 @@ module Circle =
             x <- x + 1
             // TODO: handle case between quaters
             pixels.Add(
-                { x = centerX + x
-                  y = centerY + y
+                { X = centerX + x
+                  Y = centerY + y
                   color = shape.Color }
             )
 
             pixels.Add(
-                { x = centerX + x
-                  y = centerY - y
+                { X = centerX + x
+                  Y = centerY - y
                   color = shape.Color }
             )
 
             pixels.Add(
-                { x = centerX - x
-                  y = centerY + y
+                { X = centerX - x
+                  Y = centerY + y
                   color = shape.Color }
             )
 
             pixels.Add(
-                { x = centerX - x
-                  y = centerY - y
+                { X = centerX - x
+                  Y = centerY - y
                   color = shape.Color }
             )
 
             pixels.Add(
-                { x = centerX + y
-                  y = centerY + x
+                { X = centerX + y
+                  Y = centerY + x
                   color = shape.Color }
             )
 
             pixels.Add(
-                { x = centerX + y
-                  y = centerY - x
+                { X = centerX + y
+                  Y = centerY - x
                   color = shape.Color }
             )
 
             pixels.Add(
-                { x = centerX - y
-                  y = centerY + x
+                { X = centerX - y
+                  Y = centerY + x
                   color = shape.Color }
             )
 
             pixels.Add(
-                { x = centerX - y
-                  y = centerY - x
+                { X = centerX - y
+                  Y = centerY - x
                   color = shape.Color }
             )
 
@@ -101,11 +101,11 @@ module Circle =
 
         getCirclePixels shape
         |> Seq.filter (fun p ->
-            p.x < CANVAS_WIDTH
-            && p.x >= 0
-            && p.y < CANVAS_HEIGHT
-            && p.y >= 0)
-        |> Seq.iter (fun p -> tmp.SetPixel(p.x, p.y, p.color))
+            p.X < CANVAS_WIDTH
+            && p.X >= 0
+            && p.Y < CANVAS_HEIGHT
+            && p.Y >= 0)
+        |> Seq.iter (fun p -> tmp.SetPixel(p.X, p.Y, p.color))
 
         (shape, tmp)
         
@@ -125,6 +125,6 @@ module Circle =
         let newCirclePixels = getCirclePixels newCircle
         newCirclePixels
         |> filterOutsidePixels
-        |> Seq.iter (fun p -> tmp.SetPixel(p.x, p.y, p.color))
+        |> Seq.iter (fun p -> tmp.SetPixel(p.X, p.Y, p.color))
         
         (newCircle, tmp)

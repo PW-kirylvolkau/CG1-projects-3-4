@@ -5,11 +5,12 @@ open Rasterization
 open Rasterization.Drawing.Line
 open Rasterization.Drawing.Circle
 open Rasterization.Drawing.Polygon
+open Rasterization.Shapes.Rectangle
 
 let hitShape (point: Point) (antialiasing: AntiaAlisaingMode) (shape: Shape) =
     let getHit (point: Point) (pixels: ResizeArray<Pixel>)  =
         pixels
-        |> Seq.map (fun p -> Point(p.x, p.y))
+        |> Seq.map (fun p -> Point(p.X, p.Y))
         |> Seq.exists (pointsAreInProximity point)
         |> function
             | true -> Some shape
@@ -42,7 +43,7 @@ let getPolygonHit (shape: Shape) (point: Point) (aliasing: AntiaAlisaingMode) =
         let mutable edgeIndex = -1 
         for i in 0..shape.Points.Length-2 do
             let line = line shape.Color shape.Points[i] shape.Points[i + 1] shape.Thickness
-            let linePixels = getLinePixels line aliasing |> Seq.map (fun p -> Point(p.x, p.y))
+            let linePixels = getLinePixels line aliasing |> Seq.map (fun p -> Point(p.X, p.Y))
             if Seq.exists (fun p -> pointsAreInProximity p point) linePixels then
                 edgeIndex <- i + 1 
             

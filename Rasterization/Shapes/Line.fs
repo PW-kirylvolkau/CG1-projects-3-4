@@ -31,7 +31,7 @@ module Line =
             let R = (lerp 255 shapeColor.R cov) |> int
             let G = (lerp 255 shapeColor.G cov) |> int
             let B = (lerp 255 shapeColor.B cov) |> int
-            pixels.Add({ x = x; y = y; color = color R G B })
+            pixels.Add({ X = x; Y = y; color = color R G B })
 
         cov
 
@@ -47,8 +47,8 @@ module Line =
         [ 0..thickness ]
         |> List.map mapThickness
         |> List.iter (fun ((x1, x2), (y1, y2)) ->
-            pixels.Add({ x = x1; y = y1; color = shapeColor })
-            pixels.Add({ x = x2; y = y2; color = shapeColor }))
+            pixels.Add({ X = x1; Y = y1; color = shapeColor })
+            pixels.Add({ X = x2; Y = y2; color = shapeColor }))
 
 
     let copyPixelsWithAntiAliasing
@@ -300,7 +300,8 @@ module Line =
 
         shape
         |> (fun s -> getLinePixels s antialiasing)
-        |> Seq.iter (fun p -> tmp.SetPixel(p.x, p.y, p.color))
+        |> filterOutsidePixels
+        |> Seq.iter (fun p -> tmp.SetPixel(p.X, p.Y, p.color))
 
         shape, tmp
 
@@ -325,6 +326,6 @@ module Line =
         let newLine = {shape with Points = newLineEnds}
         getLinePixels newLine antialiasing
         |> filterOutsidePixels
-        |> Seq.iter (fun p -> tmp.SetPixel(p.x, p.y, p.color))
+        |> Seq.iter (fun p -> tmp.SetPixel(p.X, p.Y, p.color))
         
         (newLine, tmp)

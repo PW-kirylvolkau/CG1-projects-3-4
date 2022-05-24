@@ -17,6 +17,7 @@
     <Compile Include="ShapeHitting.fs" />
     <Compile Include="ShapeDrawing.fs" />
     <Compile Include="ShapeMoving.fs" />
+    <Compile Include="ShapeClipping.fs" />
     <Compile Include="DrawingCanvas.fs" />
     <Compile Include="MainView.fs" />
     <Compile Include="Program.fs" />
